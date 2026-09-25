@@ -6,7 +6,7 @@ import CTASection from "@/components/CTASection";
 
 export default function DoctorsPage() {
   return (
-    <div className="flex flex-col w-full pt-20">
+    <div className="flex flex-col w-full pt-28 sm:pt-32">
       <DoctorsSection />
       <WhyDentelioSection />
       <TestimonialsSection />

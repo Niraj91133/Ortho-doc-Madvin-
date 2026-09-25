@@ -7,7 +7,7 @@ import CTASection from "@/components/CTASection";
 
 export default function AboutPage() {
   return (
-    <div className="flex flex-col w-full pt-20">
+    <div className="flex flex-col w-full pt-28 sm:pt-32">
       <AboutStatsSection />
       <WhyDentelioSection />
       <InsideSection />

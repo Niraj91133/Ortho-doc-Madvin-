@@ -25,7 +25,7 @@ export default function HeroSection() {
   const leadDoctor = doctors[0];
 
   return (
-    <section className="relative min-h-[92vh] lg:min-h-screen flex items-center pt-32 pb-16 lg:py-0 overflow-hidden">
+    <section className="relative min-h-[92vh] lg:min-h-screen flex items-center pt-36 pb-16 lg:pt-32 lg:pb-16 overflow-hidden">
       {/* Background Image Container with Gradient Overlay */}
       <div className="absolute inset-0 z-0">
         <Image
