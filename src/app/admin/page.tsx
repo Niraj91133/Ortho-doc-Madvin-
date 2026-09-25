@@ -55,6 +55,21 @@ export default function AdminPage() {
   const [isNoticeEditOpen, setIsNoticeEditOpen] = useState(false);
   const [tempNotice, setTempNotice] = useState(closedNotice);
   const [selectedAppointment, setSelectedAppointment] = useState<AppointmentRecord | null>(null);
+  const [currentTime, setCurrentTime] = useState("");
+
+  React.useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      setCurrentTime(
+        now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) +
+        " • " +
+        now.toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" })
+      );
+    };
+    updateTime();
+    const interval = setInterval(updateTime, 10000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Walk-in form state
   const [walkInForm, setWalkInForm] = useState({
@@ -195,6 +210,13 @@ export default function AdminPage() {
           </div>
 
           <div className="flex items-center gap-2.5">
+            {currentTime && (
+              <span className="hidden lg:inline-flex items-center gap-1.5 px-3 py-1 bg-white/10 rounded-xl text-[11px] font-mono text-[#a7e8ec] border border-white/10">
+                <Clock className="w-3.5 h-3.5" />
+                {currentTime}
+              </span>
+            )}
+
             <button
               onClick={() => setIsWalkInModalOpen(true)}
               className="px-3.5 py-1.5 bg-[#a7e8ec] text-[#083c45] rounded-xl text-xs font-bold hover:bg-white transition-all shadow-sm flex items-center gap-1.5"
@@ -487,8 +509,79 @@ export default function AdminPage() {
             </div>
           </div>
 
-          {/* Table of Appointments */}
-          <div className="overflow-x-auto">
+          {/* Mobile Card View (Small screens) */}
+          <div className="md:hidden space-y-3">
+            {filteredAppointments.length === 0 ? (
+              <div className="py-10 text-center text-gray-400">
+                <p className="text-sm font-semibold">No appointments match your search or filter.</p>
+              </div>
+            ) : (
+              filteredAppointments.map((app) => (
+                <div
+                  key={app.id}
+                  onClick={() => setSelectedAppointment(app)}
+                  className="bg-gray-50/80 p-4 rounded-2xl border border-gray-200/80 space-y-3 text-xs"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono font-bold text-xs bg-[#0b5660]/10 text-[#083c45] px-2.5 py-1 rounded-lg border border-[#0b5660]/20">
+                      {app.tokenNumber}
+                    </span>
+                    <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold capitalize ${
+                      app.status === "confirmed" ? "bg-emerald-100 text-emerald-800" :
+                      app.status === "pending" ? "bg-amber-100 text-amber-800" :
+                      app.status === "completed" ? "bg-blue-100 text-blue-800" : "bg-gray-100 text-gray-600"
+                    }`}>
+                      {app.status}
+                    </span>
+                  </div>
+
+                  <div>
+                    <h4 className="font-bold text-sm text-brand-dark">{app.patientName}</h4>
+                    <p className="text-xs text-brand-muted">{app.service}</p>
+                    <p className="text-xs text-[#0b5660] font-medium mt-0.5">{app.date} • {app.timeSlot}</p>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-2 border-t border-gray-200/60" onClick={(e) => e.stopPropagation()}>
+                    <div className="flex items-center gap-1.5">
+                      {app.status === "pending" && (
+                        <button
+                          onClick={() => updateAppointmentStatus(app.id, "confirmed")}
+                          className="px-2.5 py-1 bg-emerald-600 text-white rounded-lg text-xs font-bold"
+                        >
+                          Confirm
+                        </button>
+                      )}
+                      {app.status === "confirmed" && (
+                        <button
+                          onClick={() => updateAppointmentStatus(app.id, "completed")}
+                          className="px-2.5 py-1 bg-blue-600 text-white rounded-lg text-xs font-bold"
+                        >
+                          Complete
+                        </button>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <a
+                        href={`https://wa.me/${app.phone.replace(/[^0-9]/g, "")}?text=Hello%20${encodeURIComponent(app.patientName)},%20your%20OPD%20appointment%20with%20Dr.%20Vinod%20Kumar%20is%20${app.status.toUpperCase()}.%20Token:%20${app.tokenNumber}.`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-1.5 bg-emerald-50 text-emerald-700 rounded-lg"
+                        title="WhatsApp"
+                      >
+                        <MessageSquare className="w-4 h-4" />
+                      </a>
+                      <a href={`tel:${app.phone}`} className="p-1.5 bg-[#0b5660]/10 text-[#0b5660] rounded-lg" title="Call">
+                        <Phone className="w-4 h-4" />
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+
+          {/* Table of Appointments (Desktop & Tablet) */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead>
                 <tr className="border-b border-gray-200 text-gray-500 font-bold uppercase tracking-wider text-[11px]">

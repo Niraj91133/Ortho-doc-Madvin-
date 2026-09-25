@@ -6,6 +6,7 @@ import { BookingProvider } from "@/context/BookingContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AppointmentModal from "@/components/AppointmentModal";
+import FloatingEmergencyBar from "@/components/FloatingEmergencyBar";
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -52,6 +53,7 @@ export default function RootLayout({
             <main className="flex-grow">{children}</main>
             <Footer />
             <AppointmentModal />
+            <FloatingEmergencyBar />
           </ModalProvider>
         </BookingProvider>
       </body>
