@@ -27,6 +27,11 @@ html {
   font-family: var(--font-inter);
 }
 
+/* Ensure anchor links have clearance for fixed floating header */
+[id] {
+  scroll-margin-top: 100px;
+}
+
 body {
   background-color: #fafaf7;
   color: #132424;
